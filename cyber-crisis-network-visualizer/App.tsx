@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { NodeData, LinkData, AttackType, AttackChainEvent, TooltipData, CrisisState } from './types';
 import { createRootData, findNodeById, getNodePathString } from './utils/networkUtils';
@@ -31,6 +30,8 @@ const App: React.FC = () => {
     const [nodePositions, setNodePositions] = useState<Map<string, { x: number, y: number }>>(new Map());
     const [isControlsPanelCollapsed, setIsControlsPanelCollapsed] = useState(false);
 
+    // Store pause start time in ref instead of localStorage
+    const pauseStartTimeRef = useRef<number | null>(null);
     const crisisIntervalRef = useRef<number | null>(null);
     const crisisTimeUpdateIntervalRef = useRef<number | null>(null);
 
@@ -52,9 +53,8 @@ const App: React.FC = () => {
         if (!currentViewNode) return { nodes: [], links: [] };
 
         const svgElement = document.querySelector('svg#network-graph-svg'); 
-        const viewWidth = svgElement?.clientWidth || window.innerWidth * (isControlsPanelCollapsed ? 0.95 : 0.75) ;
+        const viewWidth = svgElement?.clientWidth || window.innerWidth * (isControlsPanelCollapsed ? 0.95 : 0.75);
         const viewHeight = svgElement?.clientHeight || window.innerHeight;
-
 
         const centerX = viewWidth / 2;
         const centerY = viewHeight / 2;
@@ -112,7 +112,6 @@ const App: React.FC = () => {
         return { nodes, links };
     }, [currentViewNode, parentOfViewNode, compromisedNodes, nodePositions, updateNodeCompromiseStatus, isControlsPanelCollapsed]);
 
-
     const navigateToRoot = useCallback(() => {
         setNavigationHistory([]);
         setParentOfViewNode(null);
@@ -153,9 +152,7 @@ const App: React.FC = () => {
         setCurrentViewNode(targetNodeData);
         setParentOfViewNode(path.length > 0 ? path[path.length - 1] : (targetNodeData.parent === ROOT_NODE_ID ? rootData : null));
         setNodePositions(new Map());
-
     }, [rootData]);
-
 
     const handleNodeClick = useCallback((node: NodeData) => {
         if (node.isParent) {
@@ -170,7 +167,6 @@ const App: React.FC = () => {
             }
         }
     }, [navigateBack, rootData, currentViewNode]);
-
 
     const showTooltip = useCallback((content: string, x: number, y: number) => {
         setTooltip({ visible: true, content, x, y });
@@ -226,9 +222,7 @@ const App: React.FC = () => {
         uniqueNewCompromises.forEach(item => {
            compromiseSingleNode(item.node, item.reason, currentAttack);
         });
-
     }, [crisisState.currentAttack, rootData, compromisedNodes, compromiseSingleNode]);
-
 
     const spreadAttackRef = useRef(spreadAttack);
     useEffect(() => {
@@ -258,7 +252,6 @@ const App: React.FC = () => {
             if (crisisTimeUpdateIntervalRef.current) clearInterval(crisisTimeUpdateIntervalRef.current);
         };
     }, [crisisState.active, crisisState.paused, crisisState.propagationSpeed, crisisState.startTime, crisisState.totalPausedTime]);
-
 
     const simulateCrisis = useCallback(() => {
         if (!rootData) return;
@@ -319,13 +312,13 @@ const App: React.FC = () => {
             let newTotalPausedTime = prev.totalPausedTime;
             
             if (newPausedState) { 
-                localStorage.setItem('crisisPauseStartTime', Date.now().toString());
+                // Store pause start time in ref instead of localStorage
+                pauseStartTimeRef.current = Date.now();
             } else { 
-                const pauseStartTimeStr = localStorage.getItem('crisisPauseStartTime');
-                if (pauseStartTimeStr && prev.startTime) { 
-                    const pauseStartTime = parseInt(pauseStartTimeStr);
-                    newTotalPausedTime += (Date.now() - pauseStartTime);
-                    localStorage.removeItem('crisisPauseStartTime'); 
+                // Calculate pause duration from ref
+                if (pauseStartTimeRef.current && prev.startTime) { 
+                    newTotalPausedTime += (Date.now() - pauseStartTimeRef.current);
+                    pauseStartTimeRef.current = null;
                 }
             }
             return { ...prev, paused: newPausedState, totalPausedTime: newTotalPausedTime };
@@ -344,6 +337,7 @@ const App: React.FC = () => {
         setCompromisedNodes(new Set());
         setAttackChain([]);
         setCrisisTime(0);
+        pauseStartTimeRef.current = null;
     }, []);
 
     const handleSpeedChange = useCallback((speed: number) => {
@@ -369,7 +363,6 @@ const App: React.FC = () => {
 
         const targetIndexInTrail = currentTrail.findIndex(n => n?.id === nodeId);
 
-
         if (targetIndexInTrail !== -1) {
             const newHistory = currentTrail.slice(0, targetIndexInTrail);
             const newCurrentView = currentTrail[targetIndexInTrail];
@@ -383,7 +376,6 @@ const App: React.FC = () => {
             navigateToSpecificNodeFromChain(nodeId);
         }
     }, [rootData, navigationHistory, currentViewNode, navigateToRoot, navigateToSpecificNodeFromChain]);
-
 
     if (!rootData || !currentViewNode) {
         return <div className="flex items-center justify-center h-screen bg-neutral-900 text-white">Chargement des données réseau...</div>;
@@ -427,7 +419,6 @@ const App: React.FC = () => {
         }
         return uniqueItems;
     }, [rootData, navigationHistory, currentViewNode]);
-
 
     return (
         <div className="flex h-screen w-screen font-sans antialiased bg-neutral-900 text-neutral-200 overflow-hidden">
