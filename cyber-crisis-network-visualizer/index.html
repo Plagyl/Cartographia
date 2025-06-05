@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -13,78 +13,64 @@
           sans-serif;
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
-        background-color: #1a202c; /* Tailwind: bg-neutral-900 */
-        color: #e2e8f0; /* Tailwind: text-neutral-200 */
+        background-color: #1a202c;
+        color: #e2e8f0;
       }
       /* Scrollbar styling for webkit browsers */
       .scrollbar-thin {
         scrollbar-width: thin;
-        scrollbar-color: #4a5568 #1a202c; /* thumb track */
+        scrollbar-color: #4a5568 #1a202c;
       }
       .scrollbar-thin::-webkit-scrollbar {
         width: 8px;
         height: 8px;
       }
       .scrollbar-thin::-webkit-scrollbar-track {
-        background: #1f2937; /* neutral-800 (darker) */
+        background: #1f2937;
       }
       .scrollbar-thin::-webkit-scrollbar-thumb {
-        background-color: #6b7280; /* neutral-500 (slightly lighter for contrast) */
+        background-color: #6b7280;
         border-radius: 10px;
-        border: 2px solid #1f2937; /* neutral-800 (darker) */
+        border: 2px solid #1f2937;
       }
       .scrollbar-thumb-neutral-600::-webkit-scrollbar-thumb {
-        background-color: #4b5563; /* neutral-600 (darker) */
+        background-color: #4b5563;
       }
       .scrollbar-track-neutral-800::-webkit-scrollbar-track {
-         background: #1e293b; /* neutral-800 (darker) */
+         background: #1e293b;
       }
        .scrollbar-thumb-red-500\/50::-webkit-scrollbar-thumb {
-        background-color: rgba(239, 68, 68, 0.6); /* red-500 with 60% opacity */
+        background-color: rgba(239, 68, 68, 0.6);
       }
       .scrollbar-thumb-red-500\/50::-webkit-scrollbar-thumb:hover {
         background-color: rgba(239, 68, 68, 0.8);
       }
       .scrollbar-thumb-neutral-600::-webkit-scrollbar-thumb:hover {
-        background-color: #718096; /* neutral-500 */
+        background-color: #718096;
       }
 
       /* Animation for compromised links */
       @keyframes dashLink {
         to {
-            stroke-dashoffset: -20; /* Adjust value for speed */
+            stroke-dashoffset: -20;
         }
       }
-      .link-compromised { /* Static style for any compromised link */
+      .link-compromised {
         stroke-dasharray: 6, 4;
       }
-      .link-compromised.animated { /* Animated style */
+      .link-compromised.animated {
         animation: dashLink 1.2s linear infinite;
       }
 
       /* Styled node labels */
       .node-label-styled {
         font-size: 12px !important;
-        fill: #e2e8f0 !important; /* Tailwind: text-neutral-200 */
+        fill: #e2e8f0 !important;
         text-shadow: 0 1px 3px rgba(0,0,0,0.6);
         font-weight: 500;
       }
-
     </style>
-  <script type="importmap">
-{
-  "imports": {
-    "react": "https://esm.sh/react@19.1.0",
-    "react/jsx-runtime": "https://esm.sh/react@19.1.0/jsx-runtime",
-    "react-dom/client": "https://esm.sh/react-dom@19.1.0/client",
-    "d3": "https://esm.sh/d3@7.9.0",
-    "react-dom/": "https://esm.sh/react-dom@^19.1.0/",
-    "react/": "https://esm.sh/react@^19.1.0/"
-  }
-}
-</script>
-<link rel="stylesheet" href="/index.css">
-</head>
+  </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
     <div id="root"></div>
