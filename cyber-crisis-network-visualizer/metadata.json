@@ -1,0 +1,6 @@
+{
+  "name": "Cyber Crisis Network Visualizer",
+  "description": "A React web application to visualize a corporate network infrastructure and simulate cyber attack propagation using D3.js for graph rendering and Tailwind CSS for styling. Users can navigate the network hierarchy, observe attack chains, and control simulation parameters.",
+  "requestFramePermissions": [],
+  "prompt": ""
+}
